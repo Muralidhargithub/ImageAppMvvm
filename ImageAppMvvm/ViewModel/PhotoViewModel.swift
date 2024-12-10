@@ -72,4 +72,19 @@ class PhotoViewModel {
             }
         }
     }
+    
+    // MARK: - Photo Details
+    func getPhotoDetails(at index: Int) -> (photo: Photo, loadImage: (@escaping (UIImage?) -> Void) -> Void)? {
+        guard let selectedPhoto = photo(at: index) else { return nil }
+
+        let loadImage: (@escaping (UIImage?) -> Void) -> Void = { [weak self] completion in
+            guard let self = self, let url = URL(string: selectedPhoto.url ?? "") else {
+                completion(nil)
+                return
+            }
+            self.loadImage(from: url, completion: completion)
+        }
+
+        return (photo: selectedPhoto, loadImage: loadImage)
+    }
 }

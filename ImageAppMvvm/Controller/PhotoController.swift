@@ -32,6 +32,7 @@ class PhotoController: UIView {
     private func setup() {
         addSubview(tableView)
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
         
         NSLayoutConstraint.activate([
@@ -77,5 +78,30 @@ extension PhotoController: UITableViewDataSource {
         }
 
         return cell
+    }
+}
+
+//MARK: - Since PhotoController is a UIView, I need a helper to find the parent view controller
+extension UIView {
+    var parentViewController: UIViewController? {
+        var parentResponder: UIResponder? = self
+        while parentResponder != nil {
+            parentResponder = parentResponder?.next
+            if let viewController = parentResponder as? UIViewController {
+                return viewController
+            }
+        }
+        return nil
+    }
+}
+
+
+// MARK: - UITableViewDelegate
+extension PhotoController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let detailVC = PhotoDetailViewController(viewModel: viewModel, photoIndex: indexPath.row)
+        if let parentVC = self.parentViewController {
+            parentVC.present(detailVC, animated: true, completion: nil)
+        }
     }
 }
